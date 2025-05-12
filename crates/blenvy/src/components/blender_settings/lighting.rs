@@ -113,6 +113,7 @@ fn process_background_shader(
     for background_shader in background_shaders.iter() {
         commands.insert_resource(AmbientLight {
             color: background_shader.color,
+            affects_lightmapped_meshes: true,
             // Just a guess, see <https://github.com/bevyengine/bevy/issues/12280>
             brightness: background_shader.strength * 400.0,
         });

@@ -1,5 +1,5 @@
 use bevy::{
-    core::Name,
+    prelude::Name,
     ecs::{
         entity::Entity,
         query::{Added, Without},
@@ -7,20 +7,19 @@ use bevy::{
         world::World,
     },
     gltf::{GltfExtras, GltfMaterialExtras, GltfMeshExtras, GltfSceneExtras},
-    hierarchy::Parent,
+    prelude::ChildOf,
     log::{debug, warn},
     reflect::{TypeRegistration},
-    utils::HashMap,
     prelude::PartialReflect,
 };
-
+use bevy::platform::collections::HashMap;
 use crate::{ronstring_to_reflect_component, GltfProcessed};
 
 // , mut entity_components: HashMap<Entity, Vec<(Box<dyn Reflect>, TypeRegistration)>>
 fn find_entity_components(
     entity: Entity,
     name: Option<&Name>,
-    parent: Option<&Parent>,
+    parent: Option<&ChildOf>,
     reflect_components: Vec<(Box<dyn PartialReflect>, TypeRegistration)>,
     entity_components: &HashMap<Entity, Vec<(Box<dyn PartialReflect>, TypeRegistration)>>,
 ) -> (Entity, Vec<(Box<dyn PartialReflect>, TypeRegistration)>) {
@@ -58,10 +57,10 @@ fn find_entity_components(
 
 /// main function: injects components into each entity in gltf files that have `gltf_extras`, using reflection
 pub fn add_components_from_gltf_extras(world: &mut World) {
-    let mut extras = world.query_filtered::<(Entity, Option<&Name>, &GltfExtras, Option<&Parent>), (Added<GltfExtras>, Without<GltfProcessed>)>();
-    let mut scene_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfSceneExtras, Option<&Parent>), (Added<GltfSceneExtras>, Without<GltfProcessed>)>();
-    let mut mesh_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMeshExtras, Option<&Parent>), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
-    let mut material_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMaterialExtras, Option<&Parent>), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
+    let mut extras = world.query_filtered::<(Entity, Option<&Name>, &GltfExtras, Option<&ChildOf>), (Added<GltfExtras>, Without<GltfProcessed>)>();
+    let mut scene_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfSceneExtras, Option<&ChildOf>), (Added<GltfSceneExtras>, Without<GltfProcessed>)>();
+    let mut mesh_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMeshExtras, Option<&ChildOf>), (Added<GltfMeshExtras>, Without<GltfProcessed>)>();
+    let mut material_extras = world.query_filtered::<(Entity, Option<&Name>, &GltfMaterialExtras, Option<&ChildOf>), (Added<GltfMaterialExtras>, Without<GltfProcessed>)>();
 
     let mut entity_components: HashMap<Entity, Vec<(Box<dyn PartialReflect>, TypeRegistration)>> =
         HashMap::new();

@@ -32,7 +32,7 @@ fn start_game(mut next_app_state: ResMut<NextState<AppState>>) {
 #[allow(clippy::too_many_arguments)]
 #[allow(clippy::type_complexity)]
 fn validate_export(
-    parents: Query<&Parent>,
+    parents: Query<&ChildOf>,
     children: Query<&Children>,
     names: Query<&Name>,
     blueprints: Query<(Entity, &Name, &BlueprintInfo)>,

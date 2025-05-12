@@ -1,8 +1,8 @@
 use bevy::log::{debug, warn};
+use bevy::platform::collections::HashMap;
 use bevy::prelude::PartialReflect;
 use bevy::reflect::serde::ReflectDeserializer;
 use bevy::reflect::{TypeRegistration, TypeRegistry};
-use bevy::utils::HashMap;
 use ron::Value;
 use serde::de::DeserializeSeed;
 
