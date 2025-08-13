@@ -48,6 +48,13 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
     let t = reg.type_info();
     let binding = t.type_path_table();
     let short_name = binding.short_path();
+
+    let key = if t.type_path() == "smallvec::SmallVec<[core::any::TypeId; 1]>" {
+        "smallvec::SmallVec<[alloc::string::String; 1]>"
+    } else {
+        t.type_path()
+    };
+
     let mut schema = match t {
         TypeInfo::Struct(info) => {
             let properties = info
@@ -153,8 +160,9 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
             "items": false,
         }),
         TypeInfo::List(info) => {
+            // [myn] substitute types that contains core::any::TypeId
             json!({
-                "long_name": t.type_path(),
+                "long_name": t.type_path().replace("core::any::TypeId", "alloc::string::String"),
                 "type": "array",
                 "typeInfo": "List",
                 "items": json!({"type": typ(info.item_ty().path())}),
@@ -210,11 +218,13 @@ pub fn export_type(reg: &TypeRegistration) -> (String, Value) {
         .unwrap()
         .insert("short_name".to_owned(), short_name.into());
 
-    (t.type_path().to_owned(), schema)
+    (key.to_owned(), schema)
 }
 
 fn typ(t: &str) -> Value {
-    json!({ "$ref": format!("#/$defs/{t}") })
+    // [myn]
+    let t2 = t.replace("core::any::TypeId", "alloc::string::String");
+    json!({ "$ref": format!("#/$defs/{t2}") })
 }
 
 fn map_json_type(t: &str) -> Value {
